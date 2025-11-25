@@ -58,10 +58,24 @@ const transactionsSlice = createSlice({
         Object.assign(state.items[index], changes);
       }
     },
+    setTransactions(
+      state: TransactionState,
+      action: PayloadAction<Transaction[]>
+    ) {
+      state.items = action.payload;
+    },
+    clearAllTransactions(state: TransactionState) {
+      state.items = [];
+    },
   },
 });
 
-export const { addTransaction, removeTransaction, editTransaction } =
-  transactionsSlice.actions;
+export const {
+  addTransaction,
+  removeTransaction,
+  editTransaction,
+  setTransactions,
+  clearAllTransactions,
+} = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;
