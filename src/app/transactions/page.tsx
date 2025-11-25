@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import {
   selectTotalsByType,
-  selectTransactionById,
   selectTransactions,
 } from "@/features/transactions/transactionSelectors";
 import { useState } from "react";
@@ -15,9 +14,11 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 export default function TransactionPage() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<"All" | "income" | "expense">(
-    "All"
+  const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
+    "all"
   );
+  const [fromDate, setFromDate] = useState<string>();
+  const [toDate, setToDate] = useState<string>();
 
   const transactions = useAppSelector(selectTransactions);
 
@@ -32,10 +33,28 @@ export default function TransactionPage() {
 
   const dispatch = useDispatch();
 
-  const filteredTransactions =
-    filterType === "All"
+  const filteredByType =
+    filterType === "all"
       ? transactions
       : transactions.filter((tx) => tx.type === filterType);
+
+  const filteredTransactions = filteredByType.filter((tx) => {
+    if (!fromDate && !toDate) return true;
+
+    const txTime = new Date(tx.date).getTime();
+
+    if (fromDate) {
+      const fromTime = new Date(fromDate).getTime();
+      if (txTime < fromTime) return false;
+    }
+
+    if (toDate) {
+      const toTime = new Date(toDate).getTime();
+      if (txTime > toTime) return false;
+    }
+
+    return true;
+  });
 
   const handleDeletion = (id: string) => {
     setSelectedId(id);
@@ -81,6 +100,35 @@ export default function TransactionPage() {
           </div>
         ) : (
           <div>
+            <div className="flex justify-end mb-4">
+              <div className="flex items-left gap-2 mr-6">
+                <label className="text-sm text-gray-600">From:</label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <label className="text-sm text-gray-600">To:</label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+              </div>
+              <select
+                value={filterType}
+                onChange={(e) =>
+                  setFilterType(e.target.value as "all" | "income" | "expense")
+                }
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              >
+                <option value="all">All</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
             <ul>
               <li className="grid grid-cols-5 items-center p-3 bg-gray-500 text-white font-semibold rounded-t-lg">
                 <span className="text-left">Type</span>
@@ -89,7 +137,7 @@ export default function TransactionPage() {
                 <span className="text-center">Date</span>
                 <span className="text-right">Actions</span>
               </li>
-              {transactions.map((tx) => (
+              {filteredTransactions.map((tx) => (
                 <li
                   key={tx.id}
                   className={`grid grid-cols-5 items-center p-3 text-white ${
