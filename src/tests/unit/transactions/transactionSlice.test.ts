@@ -8,201 +8,208 @@ import reducer, {
   Transaction,
 } from "@/features/transactions/transactionSlice";
 
-const createInitialState = (): TransactionState => ({
-  items: [],
-});
+describe("transactionsSlice", () => {
+  const createInitialState = (): TransactionState => ({
+    items: [],
+  });
 
-it("should handle addTransaction", () => {
-  const initialState = createInitialState();
-
-  const newTx: Transaction = {
+  const createTx = (overrides: Partial<Transaction> = {}): Transaction => ({
     id: "1",
     type: "income",
     amount: 100,
     categoryId: "salary",
     date: "2025-01-01",
     note: "Test transaction",
-  };
+    ...overrides,
+  });
 
-  const nextState = reducer(initialState, addTransaction(newTx));
+  it("should handle addTransaction", () => {
+    const initialState = createInitialState();
 
-  expect(nextState.items).toHaveLength(1);
+    const newTx = createTx();
 
-  expect(nextState.items[0]).toEqual(newTx);
-});
+    const nextState = reducer(initialState, addTransaction(newTx));
 
-it("should remove a transaction", () => {
-  const initialState = createInitialState();
+    expect(nextState.items).toHaveLength(1);
 
-  const newTx1: Transaction = {
-    id: "1",
-    type: "income",
-    amount: 3000,
-    categoryId: "salary",
-    date: "2025-01-01",
-    note: "Test transaction",
-  };
+    expect(nextState.items[0]).toEqual(newTx);
+  });
 
-  const newTx2: Transaction = {
-    id: "2",
-    type: "expense",
-    amount: 1100,
-    categoryId: "trip",
-    date: "2025-12-12",
-    note: "Test transaction",
-  };
+  it("should remove a transaction", () => {
+    const initialState = createInitialState();
 
-  const newTx3: Transaction = {
-    id: "3",
-    type: "income",
-    amount: 200,
-    categoryId: "lessons",
-    date: "2025-11-11",
-    note: "Test transaction",
-  };
+    const newTx1 = createTx();
 
-  const populatedState: TransactionState = {
-    ...initialState,
-    items: [newTx1, newTx2, newTx3],
-  };
+    const newTx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
 
-  const nextState = reducer(populatedState, removeTransaction({ id: "2" }));
+    const newTx3 = createTx({
+      id: "3",
+      type: "income",
+      amount: 200,
+      categoryId: "lessons",
+    });
 
-  expect(nextState.items).toHaveLength(2);
-  expect(nextState.items.find((tx) => tx.id === "2")).toBeUndefined();
-  expect(nextState.items.find((tx) => tx.id === "1")).toEqual(newTx1);
-  expect(nextState.items.find((tx) => tx.id === "3")).toEqual(newTx3);
-});
+    const populatedState: TransactionState = {
+      ...initialState,
+      items: [newTx1, newTx2, newTx3],
+    };
 
-it("should edit the particular property of the transaction", () => {
-  const initialState = createInitialState();
+    const nextState = reducer(populatedState, removeTransaction({ id: "2" }));
 
-  const newTx1: Transaction = {
-    id: "1",
-    type: "income",
-    amount: 1400,
-    categoryId: "salary",
-    date: "2025-01-01",
-    note: "Test transaction",
-  };
+    expect(nextState.items).toHaveLength(2);
+    expect(nextState.items.find((tx) => tx.id === "2")).toBeUndefined();
+    expect(nextState.items.find((tx) => tx.id === "1")).toEqual(newTx1);
+    expect(nextState.items.find((tx) => tx.id === "3")).toEqual(newTx3);
+  });
 
-  const newTx2: Transaction = {
-    id: "2",
-    type: "expense",
-    amount: 1100,
-    categoryId: "trip",
-    date: "2025-12-12",
-    note: "Test transaction",
-  };
+  it("should edit the particular property of the transaction", () => {
+    const initialState = createInitialState();
 
-  const populatedState: TransactionState = {
-    ...initialState,
-    items: [newTx1, newTx2],
-  };
+    const newTx1 = createTx();
 
-  const nextState = reducer(
-    populatedState,
-    editTransaction({ id: "1", changes: { amount: 2100 } })
-  );
+    const newTx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
 
-  const updatedTx = nextState.items.find((tx) => tx.id === "1");
+    const populatedState: TransactionState = {
+      ...initialState,
+      items: [newTx1, newTx2],
+    };
 
-  expect(updatedTx?.amount).toBe(2100);
-  expect(updatedTx?.type).toBe("income");
-  expect(updatedTx?.categoryId).toBe("salary");
-  expect(updatedTx?.note).toBe("Test transaction");
+    const nextState = reducer(
+      populatedState,
+      editTransaction({ id: "1", changes: { amount: 2100 } })
+    );
 
-  expect(nextState.items.find((tx) => tx.id === "2")).toEqual(newTx2);
-});
+    const updatedTx = nextState.items.find((tx) => tx.id === "1");
 
-it("should erase all the transactions", () => {
-  const initialState = createInitialState();
+    expect(updatedTx?.amount).toBe(2100);
+    expect(updatedTx?.type).toBe("income");
+    expect(updatedTx?.categoryId).toBe("salary");
+    expect(updatedTx?.note).toBe("Test transaction");
 
-  const newTx1: Transaction = {
-    id: "1",
-    type: "income",
-    amount: 1400,
-    categoryId: "salary",
-    date: "2025-01-01",
-    note: "Test transaction",
-  };
+    expect(nextState.items.find((tx) => tx.id === "2")).toEqual(newTx2);
+  });
 
-  const newTx2: Transaction = {
-    id: "2",
-    type: "expense",
-    amount: 1100,
-    categoryId: "trip",
-    date: "2025-12-12",
-    note: "Test transaction",
-  };
+  it("should erase all the transactions", () => {
+    const initialState = createInitialState();
 
-  const populatedState: TransactionState = {
-    ...initialState,
-    items: [newTx1, newTx2],
-  };
+    const newTx1 = createTx();
 
-  const nextState = reducer(populatedState, clearAllTransactions());
+    const newTx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
 
-  expect(nextState.items).toEqual([]);
-});
+    const populatedState: TransactionState = {
+      ...initialState,
+      items: [newTx1, newTx2],
+    };
 
-it("should not change state if transaction id does not exist", () => {
-  const initialState = createInitialState();
+    const nextState = reducer(populatedState, clearAllTransactions());
 
-  const newTx1: Transaction = {
-    id: "1",
-    type: "income",
-    amount: 1400,
-    categoryId: "salary",
-    date: "2025-01-01",
-  };
+    expect(nextState.items).toEqual([]);
+  });
 
-  const newTx2: Transaction = {
-    id: "2",
-    type: "expense",
-    amount: 500,
-    categoryId: "food",
-    date: "2025-01-02",
-  };
+  it("should not change state if transaction id does not exist for editTransaction", () => {
+    const initialState = createInitialState();
 
-  const populatedState: TransactionState = {
-    ...initialState,
-    items: [newTx1, newTx2],
-  };
+    const newTx1 = createTx();
 
-  const nextState = reducer(
-    populatedState,
-    editTransaction({ id: "999", changes: { amount: 9999 } })
-  );
+    const newTx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
 
-  expect(nextState).toEqual(populatedState);
-});
+    const populatedState: TransactionState = {
+      ...initialState,
+      items: [newTx1, newTx2],
+    };
 
-it("should not change state if transaction id does not exist", () => {
-  const initialState = createInitialState();
+    const nextState = reducer(
+      populatedState,
+      editTransaction({ id: "999", changes: { amount: 9999 } })
+    );
 
-  const newTx1: Transaction = {
-    id: "1",
-    type: "income",
-    amount: 1400,
-    categoryId: "salary",
-    date: "2025-01-01",
-  };
+    expect(nextState).toEqual(populatedState);
+  });
 
-  const newTx2: Transaction = {
-    id: "2",
-    type: "expense",
-    amount: 500,
-    categoryId: "food",
-    date: "2025-01-02",
-  };
+  it("should not change state if transaction id does not exist for removeTransaction", () => {
+    const initialState = createInitialState();
 
-  const populatedState: TransactionState = {
-    ...initialState,
-    items: [newTx1, newTx2],
-  };
+    const newTx1 = createTx();
 
-  const nextState = reducer(populatedState, removeTransaction({ id: "999" }));
+    const newTx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
 
-  expect(nextState).toEqual(populatedState);
+    const populatedState: TransactionState = {
+      ...initialState,
+      items: [newTx1, newTx2],
+    };
+
+    const nextState = reducer(populatedState, removeTransaction({ id: "999" }));
+
+    expect(nextState).toEqual(populatedState);
+  });
+
+  it("should replace all transactions with setTransactions", () => {
+    const initialState = createInitialState();
+
+    const tx1 = createTx();
+
+    const tx2 = createTx({
+      id: "2",
+      type: "expense",
+      categoryId: "food",
+      amount: 500,
+    });
+
+    const nextState = reducer(initialState, setTransactions([tx1, tx2]));
+
+    expect(nextState.items).toHaveLength(2);
+    expect(nextState.items).toEqual([tx1, tx2]);
+  });
+
+  it("should overwrite existing items when setTransactions is called", () => {
+    const initialState: TransactionState = {
+      items: [
+        {
+          id: "old",
+          type: "income",
+          amount: 50,
+          categoryId: "test",
+          date: "2025-01-01",
+        },
+      ],
+    };
+
+    const newTx: Transaction = {
+      id: "new",
+      type: "expense",
+      amount: 999,
+      categoryId: "other",
+      date: "2025-02-02",
+    };
+
+    const nextState = reducer(initialState, setTransactions([newTx]));
+
+    expect(nextState.items).toHaveLength(1);
+    expect(nextState.items[0]).toEqual(newTx);
+  });
 });

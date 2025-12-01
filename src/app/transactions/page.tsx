@@ -1,46 +1,33 @@
 "use client";
 
 import { useAppSelector } from "@/store/hooks";
-import { removeTransaction } from "@/features/transactions/transactionSlice";
+import {
+  removeTransaction,
+  Transaction,
+} from "@/features/transactions/transactionSlice";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import {
-  selectTotalsByType,
-  selectTransactions,
-} from "@/features/transactions/transactionSelectors";
+import { selectTransactions } from "@/features/transactions/transactionSelectors";
 import { useState } from "react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { LabelList } from "recharts";
 
-export default function TransactionPage() {
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
-    "all"
-  );
-  const [fromDate, setFromDate] = useState<string>();
-  const [toDate, setToDate] = useState<string>();
+type FilterType = "all" | "income" | "expense";
 
-  const transactions = useAppSelector(selectTransactions);
+function filterTransactions(
+  transactions: Transaction[],
+  options: { filterType: FilterType; fromDate?: string; toDate?: string }
+) {
+  const { filterType, fromDate, toDate } = options;
 
-  const { income, expense } = useAppSelector((state) =>
-    selectTotalsByType(state, {
-      from: "1970-01-01",
-      to: "2100-01-01",
-    })
-  );
-
-  const balance = income - expense;
-
-  const dispatch = useDispatch();
-
-  const filteredByType =
+  const byType =
     filterType === "all"
       ? transactions
       : transactions.filter((tx) => tx.type === filterType);
 
-  const filteredTransactions = filteredByType.filter((tx) => {
-    if (!fromDate && !toDate) return true;
+  if (!fromDate && !toDate) return byType;
 
+  return byType.filter((tx) => {
     const txTime = new Date(tx.date).getTime();
 
     if (fromDate) {
@@ -54,6 +41,26 @@ export default function TransactionPage() {
     }
 
     return true;
+  });
+}
+
+export default function TransactionPage() {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
+    "all"
+  );
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+
+  const transactions = useAppSelector(selectTransactions);
+
+  const dispatch = useDispatch();
+
+  const filteredTransactions = filterTransactions(transactions, {
+    filterType,
+    fromDate,
+    toDate,
   });
 
   const handleDeletion = (id: string) => {
@@ -77,9 +84,19 @@ export default function TransactionPage() {
     setSelectedId(null);
   };
 
-  if (transactions === null) {
+  /*   if (transactions === null) {
     return <p>Loading...</p>;
-  }
+  } */
+
+  const income = filteredTransactions
+    .filter((tx) => tx.type === "income")
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const expense = filteredTransactions
+    .filter((tx) => tx.type === "expense")
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const balance = income - expense;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
