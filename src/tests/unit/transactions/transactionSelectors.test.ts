@@ -1,11 +1,12 @@
 import {
   selectTransactions,
-  selectTotalsByType,
   selectTransactionById,
+  selectTotalsByType,
   selectTotalsWithFilters,
 } from "@/features/transactions/transactionSelectors";
+
 import type { Transaction } from "@/features/transactions/transactionSlice";
-import { RootState } from "@/store";
+import type { RootState } from "@/store";
 
 const createTx = (overrides: Partial<Transaction> = {}): Transaction => ({
   id: overrides.id ?? "1",
@@ -28,12 +29,10 @@ describe("transactionSelectors", () => {
 
     const state = createState([tx1, tx2]);
 
-    const result = selectTransactions(state);
-
-    expect(result).toEqual([tx1, tx2]);
+    expect(selectTransactions(state)).toEqual([tx1, tx2]);
   });
 
-  it("selectTransactionsById should select transaction by Id", () => {
+  it("selectTransactionById should return transaction by id", () => {
     const tx1 = createTx();
     const tx2 = createTx({ id: "2", amount: 200 });
 
@@ -43,13 +42,13 @@ describe("transactionSelectors", () => {
     expect(selectTransactionById(state, "2")).toEqual(tx2);
   });
 
-  it("selectTotalsById should return undefined if there's no id", () => {
+  it("selectTransactionById should return undefined if id does not exist", () => {
     const tx1 = createTx();
     const tx2 = createTx({ id: "2", amount: 200, type: "expense" });
 
     const state = createState([tx1, tx2]);
 
-    expect(selectTransactionById(state, "3")).toBeUndefined;
+    expect(selectTransactionById(state, "3")).toBeUndefined();
   });
 
   it("selectTotalsWithFilters should calculate totals without filters", () => {
@@ -77,7 +76,7 @@ describe("transactionSelectors", () => {
     expect(balance).toBe(1700);
   });
 
-  it("selectTotalsWithFilters should respect date range (from/to)", () => {
+  it("selectTotalsWithFilters should respect date range", () => {
     const tx1 = createTx({ date: "2025-12-19", amount: 500 });
     const tx2 = createTx({
       id: "2",
@@ -105,7 +104,7 @@ describe("transactionSelectors", () => {
     expect(balance).toBe(2400);
   });
 
-  it("selectTotalsWithFilters should calculate transactions with filter income", () => {
+  it("selectTotalsWithFilters should apply filterType = income", () => {
     const tx1 = createTx({ date: "2025-12-19", amount: 500 });
     const tx2 = createTx({
       id: "2",
@@ -124,17 +123,31 @@ describe("transactionSelectors", () => {
     const state = createState([tx1, tx2, tx3, tx4]);
 
     const { income, expense, balance } = selectTotalsWithFilters(state, {
-      from: "2025-12-01",
-      to: "2025-12-31",
       filterType: "income",
     });
 
-    expect(balance).toBe(2600);
     expect(income).toBe(2600);
     expect(expense).toBe(0);
+    expect(balance).toBe(2600);
   });
 
-  it("selectTotalsByType should reuse totals logic for given range", () => {
+  it("selectTotalsWithFilters should apply filterType = expense", () => {
+    const tx1 = createTx({ amount: 2600 });
+    const tx2 = createTx({ id: "2", amount: 600, type: "expense" });
+    const tx3 = createTx({ id: "3", amount: 500, type: "expense" });
+
+    const state = createState([tx1, tx2, tx3]);
+
+    const { income, expense, balance } = selectTotalsWithFilters(state, {
+      filterType: "expense",
+    });
+
+    expect(income).toBe(0);
+    expect(expense).toBe(1100);
+    expect(balance).toBe(-1100);
+  });
+
+  it("selectTotalsByType should count totals inside date range", () => {
     const tx1 = createTx({ amount: 500, date: "2025-12-19" });
     const tx2 = createTx({
       id: "2",

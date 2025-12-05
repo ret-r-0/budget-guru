@@ -7,7 +7,7 @@ export default defineConfig({
     },
   },
   test: {
-    globals: true,
-    environment: "jsdom", // Эмуляция браузера для тестов
+    environment: "jsdom",
+    setupFiles: ["./src/tests/setup.ts"],
   },
 });

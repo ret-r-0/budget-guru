@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { addTransaction } from "@/features/transactions/transactionSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -62,6 +63,7 @@ const AddTransactionForm = () => {
               Note:
             </label>
             <input
+              id="note"
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -71,6 +73,7 @@ const AddTransactionForm = () => {
               Date:
             </label>
             <input
+              id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -80,6 +83,7 @@ const AddTransactionForm = () => {
               Amount:
             </label>
             <input
+              id="amount"
               type="number"
               value={amount}
               min={0}
