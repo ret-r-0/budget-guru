@@ -165,7 +165,7 @@ export default function TransactionPage() {
                   <span className="text-center">
                     <Link href={`/transactions/${tx.id}/edit`}>
                       <button className="text-center underline hover:text-gray-400">
-                        {tx.note}
+                        {tx.name}
                       </button>
                     </Link>
                   </span>

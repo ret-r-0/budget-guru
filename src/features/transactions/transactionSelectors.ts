@@ -130,3 +130,5 @@ export const selectTotalsWithFilters = (
 
   return { income, expense, balance };
 };
+
+export const;

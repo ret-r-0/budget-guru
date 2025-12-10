@@ -1,13 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Transaction {
   id: string;
   type: "income" | "expense";
   amount: number;
   categoryId: string;
-  note?: string;
+  name?: string;
   date: string;
+  walletId: string;
 }
 
 export interface TransactionState {
@@ -22,14 +22,7 @@ const transactionsSlice = createSlice({
   reducers: {
     addTransaction(
       state: TransactionState,
-      action: PayloadAction<{
-        id: string;
-        type: "income" | "expense";
-        amount: number;
-        categoryId: string;
-        date: string;
-        note?: string;
-      }>
+      action: PayloadAction<Transaction>
     ) {
       state.items.push(action.payload);
     },
@@ -43,20 +36,25 @@ const transactionsSlice = createSlice({
         (transaction) => transaction.id !== action.payload.id
       );
     },
+    removeTransactionsByWallet(
+      state: TransactionState,
+      action: PayloadAction<{ walletId: string }>
+    ) {
+      state.items = state.items.filter(
+        (tx) => tx.walletId !== action.payload.walletId
+      );
+    },
     editTransaction(
       state: TransactionState,
       action: PayloadAction<{
         id: string;
-        changes?: Partial<Transaction>;
+        changes: Partial<Omit<Transaction, "id">>;
       }>
     ) {
       const { id, changes } = action.payload;
-      const index = state.items.findIndex(
-        (transaction) => transaction.id === id
-      );
-      if (index !== -1) {
-        Object.assign(state.items[index], changes);
-      }
+      const tx = state.items.find((transaction) => transaction.id === id);
+      if (!tx) return;
+      Object.assign(tx, changes);
     },
     setTransactions(
       state: TransactionState,

@@ -19,7 +19,7 @@ describe("transactionsSlice", () => {
     amount: 100,
     categoryId: "salary",
     date: "2025-01-01",
-    note: "Test transaction",
+    name: "Test transaction",
     ...overrides,
   });
 
@@ -94,7 +94,7 @@ describe("transactionsSlice", () => {
     expect(updatedTx?.amount).toBe(2100);
     expect(updatedTx?.type).toBe("income");
     expect(updatedTx?.categoryId).toBe("salary");
-    expect(updatedTx?.note).toBe("Test transaction");
+    expect(updatedTx?.name).toBe("Test transaction");
 
     expect(nextState.items.find((tx) => tx.id === "2")).toEqual(newTx2);
   });

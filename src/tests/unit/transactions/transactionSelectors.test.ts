@@ -14,7 +14,8 @@ const createTx = (overrides: Partial<Transaction> = {}): Transaction => ({
   amount: overrides.amount ?? 100,
   categoryId: overrides.categoryId ?? "general",
   date: overrides.date ?? "2025-01-01",
-  note: overrides.note,
+  name: overrides.name,
+  walletId: overrides.id ?? "1",
 });
 
 const createState = (items: Transaction[] = []): RootState =>

@@ -16,7 +16,7 @@ const EditTransactionForm = () => {
 
   const router = useRouter();
 
-  const [note, setNote] = useState(transaction?.note || "");
+  const [note, setNote] = useState(transaction?.name || "");
   const [date, setDate] = useState(transaction?.date || "");
   const [amount, setAmount] = useState(transaction?.amount.toString() || "");
   const [selectedType, setSelectedType] = useState<"income" | "expense">(
