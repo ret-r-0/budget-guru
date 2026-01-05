@@ -72,6 +72,7 @@ export const {
   addTransaction,
   removeTransaction,
   editTransaction,
+  removeTransactionsByWallet,
   setTransactions,
   clearAllTransactions,
 } = transactionsSlice.actions;

@@ -4,15 +4,16 @@ import { addTransaction } from "@/features/transactions/transactionSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { text } from "stream/consumers";
-import { string } from "zod";
+import { useParams } from "next/navigation";
 
 const AddTransactionForm = () => {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
+  const params = useParams<{ walletId: string }>();
+  const walletId = params.walletId;
 
-  const [note, setNote] = useState("");
+  const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedType, setSelectedType] = useState<"income" | "expense">(
@@ -22,7 +23,7 @@ const AddTransactionForm = () => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const validateForm = () => {
-    if (note && selectedType && date && parseFloat(amount) > 0) {
+    if (name && selectedType && date && parseFloat(amount) > 0) {
       return true;
     } else {
       return false;
@@ -37,19 +38,20 @@ const AddTransactionForm = () => {
     const transaction = {
       id: Date.now().toString(),
       type: selectedType,
-      note,
+      name,
       date,
       categoryId: selectedCategory || "default",
       amount: parseFloat(amount) || 0,
+      walletId: walletId,
     };
 
     dispatch(addTransaction(transaction));
-    router.push("/wallets/");
+    router.push(`/wallets/${walletId}/transactions/`);
   };
 
   useEffect(() => {
     setIsFormValid(validateForm());
-  }, [note, date, amount, selectedType]);
+  }, [name, date, amount, selectedType]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
@@ -59,14 +61,14 @@ const AddTransactionForm = () => {
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-4">
-            <label htmlFor="note" className="font-serif text-amber-800 mb-2">
-              Note:
+            <label htmlFor="name" className="font-serif text-amber-800 mb-2">
+              Name:
             </label>
             <input
-              id="note"
+              id="name"
               type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="border-b border-black focus:outline-0"
             />
             <label htmlFor="date" className="font-serif text-amber-800 mb-2">

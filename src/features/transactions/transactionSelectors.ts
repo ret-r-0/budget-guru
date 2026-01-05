@@ -1,12 +1,13 @@
 import { RootState } from "@/store";
-import { Transaction, TransactionState } from "./transactionSlice";
+import { Transaction } from "./transactionSlice";
 
-type filterType = "all" | "income" | "expense";
+type FilterType = "all" | "income" | "expense";
 
 export type TotalsFilter = {
   from?: string;
   to?: string;
-  filterType?: filterType;
+  filterType?: FilterType;
+  walletId: string;
 };
 
 const getDateRangeTs = (from?: string, to?: string) => {
@@ -57,12 +58,22 @@ export const selectTransactionById = (
   return state.transactions.items.find((item) => item.id === id);
 };
 
+export const selectTransactionsByWallet = (
+  state: RootState,
+  walletId: string
+): Transaction[] => {
+  const items = state.transactions?.items ?? [];
+  return items.filter((tx) => tx.walletId === walletId);
+};
+
 type DateRange = { from: string; to: string };
 
 export const selectTotalsByType = (
   state: RootState,
-  { from, to }: DateRange
+  { from, to }: DateRange,
+  walletId: string
 ): { income: number; expense: number } => {
+  const txs = selectTransactionsByWallet(state, walletId);
   const fromDate = new Date(from);
   const toDate = new Date(to);
   if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
@@ -92,7 +103,7 @@ export const selectTotalsByType = (
   let income = 0;
   let expense = 0;
 
-  for (const tx of state.transactions.items) {
+  for (const tx of txs) {
     const ts = new Date(tx.date).getTime();
     if (ts >= startOfDayTs && ts <= endOfDayTs) {
       if (tx.type === "income") income += tx.amount;
@@ -105,14 +116,16 @@ export const selectTotalsByType = (
 
 export const selectTotalsWithFilters = (
   state: RootState,
-  { from, to, filterType }: TotalsFilter
+  { from, to, filterType, walletId }: TotalsFilter
 ): { income: number; expense: number; balance: number } => {
+  const txs = selectTransactionsByWallet(state, walletId);
+
   const { fromTs, toTs } = getDateRangeTs(from, to);
 
   let income = 0;
   let expense = 0;
 
-  for (const tx of state.transactions.items) {
+  for (const tx of txs) {
     const ts = new Date(tx.date).getTime();
     if (isNaN(ts)) continue;
 
@@ -130,5 +143,3 @@ export const selectTotalsWithFilters = (
 
   return { income, expense, balance };
 };
-
-export const;

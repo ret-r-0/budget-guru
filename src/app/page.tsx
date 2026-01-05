@@ -8,14 +8,14 @@ export default function Home() {
       </h1>
 
       <p className="text-sm text-gray-500">
-        This is your development sandbox. Jump to Transactions to preview state.
+        This is your development sandbox. Jump to Wallets to preview state.
       </p>
 
       <Link
-        href="/transactions"
+        href="/wallets"
         className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 transition-colors"
       >
-        Go to Transactions →
+        Go to Wallets →
       </Link>
     </main>
   );
