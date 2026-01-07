@@ -25,7 +25,6 @@ const EditTransactionForm = () => {
   const [selectedType, setSelectedType] = useState<"income" | "expense">(
     transaction?.type || "income"
   );
-  const [selectedCategory, setSelectedCategory] = useState<string>("default");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const validateForm = () => {
@@ -44,7 +43,6 @@ const EditTransactionForm = () => {
       type: selectedType,
       name,
       date,
-      categoryId: selectedCategory || transaction!.categoryId,
       amount: parseFloat(amount) || 0,
     };
 

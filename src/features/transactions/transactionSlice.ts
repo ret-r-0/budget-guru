@@ -4,7 +4,6 @@ export interface Transaction {
   id: string;
   type: "income" | "expense";
   amount: number;
-  categoryId: string;
   name?: string;
   date: string;
   walletId: string;

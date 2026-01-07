@@ -5,21 +5,22 @@ import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import TransactionForm from "@/app/transactions/TransactionForm";
+import TransactionAddingForm from "@/app/transactions/TransactionAddingForm";
+import { Currency } from "@/features/wallets/walletCurrencies";
 
 const AddTransactionForm = () => {
   const dispatch = useAppDispatch();
-
   const router = useRouter();
   const params = useParams<{ walletId: string }>();
   const walletId = params.walletId;
 
-  const [name, setName] = useState("");
+  /*   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedType, setSelectedType] = useState<"income" | "expense">(
     "income"
   );
-  const [selectedCategory, setSelectedCategory] = useState<string>("default");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const validateForm = () => {
@@ -28,9 +29,23 @@ const AddTransactionForm = () => {
     } else {
       return false;
     }
+  }; */
+
+  const handleSubmit = (values: {
+    name: string;
+    date: string;
+    amount: number;
+    type: "income" | "expense";
+    currency: Currency;
+  }) => {
+    dispatch({
+      type: "transactions/addTransaction",
+      payload: { walletId, ...values },
+    });
+    router.push(`/wallets/${walletId}/transactions/`);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  /*   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -40,20 +55,30 @@ const AddTransactionForm = () => {
       type: selectedType,
       name,
       date,
-      categoryId: selectedCategory || "default",
       amount: parseFloat(amount) || 0,
-      walletId: walletId,
-    };
-
-    dispatch(addTransaction(transaction));
+      <TransactionAddingFormTyped
+        onSubmit={handleSubmit}
+        onCancel={() => router.push(`/wallets/${walletId}/transactions/`)}
+      />
     router.push(`/wallets/${walletId}/transactions/`);
   };
 
   useEffect(() => {
     setIsFormValid(validateForm());
-  }, [name, date, amount, selectedType]);
+  }, [name, date, amount, selectedType]); */
 
   return (
+    <div>
+      <h1>Add New Transaction</h1>
+      <TransactionForm
+        title="Add Transaction"
+        onSubmit={handleSubmit}
+        submitLabel="Add Transaction"
+        onCancel={() => router.push(`/wallets/${walletId}/transactions/`)} // Если нажали отмену, редиректим на транзакции
+      />
+    </div>
+
+    /*  
     <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
       <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-amber-200">
         <h1 className="max-w-full font-bold mb-6 text-center mt-5 font-serif text-amber-800">
@@ -124,6 +149,8 @@ const AddTransactionForm = () => {
         </form>
       </section>
     </div>
+  );
+*/
   );
 };
 
