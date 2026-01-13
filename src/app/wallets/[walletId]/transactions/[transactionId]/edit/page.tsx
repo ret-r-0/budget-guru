@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import TransactionForm, {
+  type TransactionFormValues,
+} from "@/app/transactions/TransactionForm";
 
 const EditTransactionForm = () => {
   const dispatch = useAppDispatch();
@@ -14,119 +17,48 @@ const EditTransactionForm = () => {
     transactionId: string;
   }>();
   const transaction = useAppSelector((state) =>
-    state.transactions.items.find((tx) => tx.id === transactionId)
+    state.transactions.items.find(
+      (tx) => tx.id === transactionId && tx.walletId === walletId
+    )
   );
 
   const router = useRouter();
 
-  const [name, setName] = useState(transaction?.name || "");
-  const [date, setDate] = useState(transaction?.date || "");
-  const [amount, setAmount] = useState(transaction?.amount.toString() || "");
-  const [selectedType, setSelectedType] = useState<"income" | "expense">(
-    transaction?.type || "income"
-  );
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  if (!transaction) {
+    return (
+      <div className="p-6">
+        <p className="text-center">Transaction not found</p>
+        <div className="flex justify-center mt-4">
+          <button
+            className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            onClick={() => router.push(`/wallets/${walletId}/transactions`)}
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const validateForm = () => {
-    if (name && selectedType && date && parseFloat(amount) > 0) {
-      return true;
-    } else {
-      return false;
-    }
+  const handleSubmit = (values: TransactionFormValues) => {
+    dispatch(editTransaction({ id: transaction.id, changes: values }));
+    router.push(`/wallets/${walletId}/transactions`);
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-    const changes = {
-      type: selectedType,
-      name,
-      date,
-      amount: parseFloat(amount) || 0,
-    };
-
-    const updatedTransaction = {
-      id: transaction!.id,
-      changes,
-    };
-
-    dispatch(editTransaction(updatedTransaction));
-    router.push(` /wallets/${walletId}/transactions`);
-  };
-
-  useEffect(() => {
-    setIsFormValid(validateForm());
-  }, [name, date, amount, selectedType]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
-      <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-amber-200">
-        <h1 className="max-w-full font-bold mb-6 text-center mt-5 font-serif text-amber-800">
-          Form of Editing of the Transaction
-        </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col space-y-4">
-            <label htmlFor="name" className="font-serif text-amber-800 mb-2">
-              Name:
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border-b border-black focus:outline-0"
-            />
-            <label htmlFor="date" className="font-serif text-amber-800 mb-2">
-              Date:
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="border-b border-black focus:outline-0"
-            />
-            <label htmlFor="amount" className="font-serif text-amber-800 mb-2">
-              Amount:
-            </label>
-            <input
-              type="number"
-              value={amount}
-              min={0}
-              onChange={(e) => setAmount(e.target.value)}
-              className="border-b border-black focus:outline-0"
-            />
-            <label htmlFor="type" className="font-serif text-amber-800 mb-2">
-              Type:
-            </label>
-            <select
-              id="type"
-              name="type"
-              value={selectedType}
-              onChange={(e) =>
-                setSelectedType(e.target.value as "income" | "expense")
-              }
-              className="border-0 border-black font-serif text-black-800 focus:ring-0 focus:border-none focus:outline-0"
-            >
-              <option value="income" className="font-serif text-amber-800">
-                Income
-              </option>
-              <option value="expense" className="font-serif text-amber-800">
-                Expense
-              </option>
-            </select>
-            <section className="flex justify-center mt-25">
-              <button
-                disabled={!isFormValid}
-                type="submit"
-                className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
-              >
-                Edit the transaction
-              </button>
-            </section>
-          </div>
-        </form>
-      </section>
-    </div>
+    <TransactionForm
+      title="Edit Transaction"
+      submitLabel="Save Changes"
+      initialValues={{
+        name: transaction.name ?? "",
+        amount: transaction.amount,
+        date: transaction.date,
+        type: transaction.type,
+        // currency можно НЕ передавать — форма сама возьмёт из кошелька
+      }}
+      onSubmit={handleSubmit}
+      onCancel={() => router.push(`/wallets/${walletId}/transactions`)}
+    />
   );
 };
 

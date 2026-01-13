@@ -7,7 +7,7 @@ import { Currency } from "@/features/wallets/walletCurrencies";
 
 type TxType = "income" | "expense";
 
-type TransactionFormValues = {
+export type TransactionFormValues = {
   name: string;
   amount: number;
   date: string;
