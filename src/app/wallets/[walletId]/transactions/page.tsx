@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useParams } from "next/navigation";
+import { formatMoney } from "@/app/utils/formatMoney";
 
 type FilterType = "all" | "income" | "expense";
 
@@ -183,7 +184,10 @@ export default function TransactionPage() {
                       </button>
                     </Link>
                   </span>
-                  <span className="text-center">{tx.amount}</span>
+                  <span className="text-center">
+                    {/*   {formatMoney(tx.amount, wallet.currency)} */}
+                    {tx.amount}
+                  </span>
                   <span className="text-center text-sm">{tx.date}</span>
                   <button
                     className="justify-self-end px-3 bg-gray-500 rounded-2xl font-sans tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
