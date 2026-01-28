@@ -1,21 +1,40 @@
 "use client";
 
-type ConfirmModalProps = {
+import { useState, useEffect } from "react";
+
+type RenameModalProps = {
   open: boolean;
+  currentName: string;
   title?: string;
   message?: string;
-  onConfirm: () => void;
+  onConfirm: (newName: string) => void;
   onCancel: () => void;
 };
 
-export default function ConfirmModal({
+export default function RenameModal({
   open,
-  title = "Are you sure?",
-  message = "This action cannot be undone",
+  currentName,
+  title = "Rename the item",
+  message = "Enter a new name for your item",
   onConfirm,
   onCancel,
-}: ConfirmModalProps) {
+}: RenameModalProps) {
+  const [newName, setNewName] = useState<string>(currentName);
+
+  useEffect(() => {
+    if (open) {
+      setNewName(currentName);
+    }
+  }, [open, currentName]);
+
   if (!open) return null;
+
+  const handleConfirm = () => {
+    if (newName.trim()) {
+      onConfirm(newName.trim());
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -28,6 +47,13 @@ export default function ConfirmModal({
         <h2 className="text-lg font-semibold text-gray-800 mb-2">{title}</h2>
         <p className="text-lg font-semibold text-gray-800 mb-2">{message}</p>
         <div className=" flex justify-end gap-3">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full"
+            placeholder={currentName}
+          />
           <button
             type="button"
             onClick={onCancel}
@@ -37,10 +63,10 @@ export default function ConfirmModal({
           </button>
           <button
             type="button"
-            onClick={onConfirm}
+            onClick={handleConfirm}
             className="px-4 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700 transition "
           >
-            Delete
+            Rename
           </button>
         </div>
       </div>

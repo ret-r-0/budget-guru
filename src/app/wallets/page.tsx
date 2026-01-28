@@ -6,32 +6,62 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { removeTransactionsByWallet } from "@/features/transactions/transactionSlice";
 import { selectWalletsWithTotals } from "@/features/wallets/walletSelectors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { Pencil } from "lucide-react";
 import { formatMoney } from "../utils/formatMoney";
 import { updateWallet } from "@/features/wallets/walletSlice";
+import RenameModal from "@/components/ui/RenameModal";
+import { set } from "zod";
 
 export default function WalletsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [walletName, setWalletName] = useState("My Wallet");
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [isRenameModalOpen, setRenameModalOpen] = useState<boolean>(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [draftName, setDraftName] = useState<string>("");
+
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  const checkScreenSize = () => {
+    if (window.innerWidth <= 640) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
+
+  useEffect(() => {
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
 
   const wallets = useAppSelector(selectWalletsWithTotals);
   const dispatch = useDispatch();
 
   const handleDeletion = (id: string) => {
     setSelectedId(id);
-    setModalOpen(true);
+    setDeleteModalOpen(true);
+  };
+
+  const handleRename = (newName: string) => {
+    if (newName.trim()) {
+      setWalletName(newName);
+      setRenameModalOpen(false);
+    }
   };
 
   const confirmDelete = () => {
     if (selectedId) {
       dispatch(removeTransactionsByWallet({ walletId: selectedId }));
       dispatch(removeWallet({ id: selectedId }));
-      setModalOpen(false);
+      setDeleteModalOpen(false);
       setSelectedId(null);
     } else {
       return;
@@ -39,25 +69,51 @@ export default function WalletsPage() {
   };
 
   const cancelDelete = () => {
-    setModalOpen(false);
+    setDeleteModalOpen(false);
     setSelectedId(null);
   };
 
-  const startEdit = (id: string, currentName: string) => {
-    setEditingId(id);
-    setDraftName(currentName);
+  const startEdit = (id: string) => {
+    setEditingId(id); // Устанавливаем кошелек для редактирования
+    setIsEditing(true);
+    setDraftName(
+      wallets.find((wallet) => wallet.wallet.id === id)?.wallet.name || "",
+    );
+    if (isMobile) {
+      setRenameModalOpen(true); // Модалка на мобильном
+    }
   };
 
-  const cancelEdit = () => {
+  const saveEdit = (id: string, newName?: string) => {
+    const trimmedName = draftName.trim();
+    if (newName) {
+      const trimmedName = newName.trim();
+    }
+
+    if (!trimmedName) return;
+
+    dispatch(updateWallet({ id, changes: { name: trimmedName } }));
     setEditingId(null);
     setDraftName("");
   };
 
-  const saveEdit = (id: string) => {
-    const trimmedName = draftName.trim();
-    if (!trimmedName) return;
+  const handleRenameConfirm = (newName: string) => {
+    setDraftName(newName);
+    if (!isMobile) {
+      // Если это не мобильный экран, сохраняем сразу
+      if (editingId) {
+        saveEdit(editingId);
+      }
+    } else {
+      // Для мобильного экрана открываем модалку, если нужно
+      setRenameModalOpen(true);
+    }
+    setRenameModalOpen(false);
+  };
 
-    dispatch(updateWallet({ id, changes: { name: trimmedName } }));
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setRenameModalOpen(false);
     setEditingId(null);
     setDraftName("");
   };
@@ -87,11 +143,12 @@ export default function WalletsPage() {
         ) : (
           <div>
             <ul>
-              <li className="grid grid-cols-4 items-center p-3 bg-gray-500 text-white font-semibold rounded-t-lg">
+              <li className="grid grid-cols-3 sm:grid-cols-4 items-center p-3 bg-gray-500 text-white font-semibold rounded-t-lg">
                 <span className="text-left">Name</span>
-                <span className="text-center">Currency</span>
-                <span className="text-center">Balance</span>
-                <span className="text-right">Actions</span>
+                <span className="text-center sm:block hidden">Currency</span>
+                <span className="text-center sm:block hidden">Balance</span>
+                <span className="text-center sm:text-right">Actions</span>
+                <span className="text-right sm:hidden block">Info</span>
               </li>
               {wallets.map((wallet) => {
                 const id = wallet.wallet.id;
@@ -100,46 +157,69 @@ export default function WalletsPage() {
                 return (
                   <li
                     key={wallet.wallet.id}
-                    className="grid grid-cols-4 items-center p-3 text-black"
+                    className="grid grid-cols-3 sm:grid-cols-4 items-center p-3 text-black"
                   >
-                    <span className="font-semibold text-left">
-                      {!isEditing ? (
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href={`wallets/${wallet.wallet.id}/transactions`}
-                          >
-                            <button className="text-center underline hover:text-gray-400">
-                              {wallet.wallet.name}
+                    {
+                      <span className="font-semibold text-left">
+                        {!isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`wallets/${wallet.wallet.id}/transactions`}
+                            >
+                              <button className="text-center text-sm sm:text-lg underline hover:text-gray-400">
+                                {wallet.wallet.name}
+                              </button>
+                            </Link>{" "}
+                            <button
+                              className="px-1 py-1 text-sm bg-amber-200 rounded-lg hover:bg-amber-300 transition hover:scale-110"
+                              onClick={() => startEdit(wallet.wallet.id)}
+                            >
+                              <Pencil
+                                className="w-3 h-3 sm:w-4 sm:h-4"
+                                size={16}
+                              />
                             </button>
-                          </Link>{" "}
-                          <button
-                            className="px-1 py-1 text-sm bg-amber-200 rounded-lg hover:bg-amber-300 transition hover:scale-110"
-                            onClick={() =>
-                              startEdit(wallet.wallet.id, wallet.wallet.name)
-                            }
-                          >
-                            <Pencil className="w-4 h-4" size={16} />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <input
-                            value={draftName}
-                            onChange={(e) => setDraftName(e.target.value)}
-                            className="w-full min-w-[180px] px-3 py-2 border rounded-lg"
-                            autoFocus
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveEdit(wallet.wallet.id);
-                              if (e.key === "Escape") cancelEdit();
-                            }}
-                          />
-                        </div>
-                      )}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            {isMobile ? (
+                              <RenameModal
+                                open={isRenameModalOpen}
+                                currentName={wallet.wallet.name}
+                                title="Rename Wallet"
+                                message="Enter a new name for your wallet"
+                                onConfirm={(newName) => {
+                                  saveEdit(wallet.wallet.id, newName);
+                                }}
+                                onCancel={cancelEdit}
+                              />
+                            ) : (
+                              <input
+                                value={draftName}
+                                onChange={(e) => setDraftName(e.target.value)}
+                                className="w-full min-w-[180px] px-3 py-2 border rounded-lg"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter")
+                                    saveEdit(wallet.wallet.id);
+                                  if (e.key === "Escape") cancelEdit();
+                                }}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </span>
+                    }
+
+                    <span className="text-center sm:hidden">
+                      <button className="text-gray-600 bg-gray-200 p-2 rounded-full hover:bg-gray-300">
+                        i
+                      </button>
                     </span>
-                    <span className="text-center">
+                    <span className="text-center sm:block hidden">
                       {wallet.wallet.currency}
                     </span>
-                    <span className="text-center">
+                    <span className="text-center sm:block hidden">
                       {formatMoney(wallet.balance, wallet.wallet.currency)}
                     </span>
                     <div className="justify-self-end flex items-center gap-2">
@@ -185,7 +265,7 @@ export default function WalletsPage() {
         )}
       </section>
       <ConfirmModal
-        open={isModalOpen}
+        open={isDeleteModalOpen}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         title="Delete wallet"
