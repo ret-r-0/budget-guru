@@ -6,19 +6,26 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { removeTransactionsByWallet } from "@/features/transactions/transactionSlice";
 import { selectWalletsWithTotals } from "@/features/wallets/walletSelectors";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { Pencil } from "lucide-react";
 import { formatMoney } from "../utils/formatMoney";
 import { updateWallet } from "@/features/wallets/walletSlice";
+import InfoModal from "@/components/ui/InfoModal";
 import RenameModal from "@/components/ui/RenameModal";
 import { set } from "zod";
+import { Currency } from "@/features/wallets/walletCurrencies";
 
 export default function WalletsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [walletName, setWalletName] = useState("My Wallet");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [isRenameModalOpen, setRenameModalOpen] = useState<boolean>(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(
+    null,
+  );
+  const [selectedBalance, setSelectedBalance] = useState<number | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -50,13 +57,6 @@ export default function WalletsPage() {
     setDeleteModalOpen(true);
   };
 
-  const handleRename = (newName: string) => {
-    if (newName.trim()) {
-      setWalletName(newName);
-      setRenameModalOpen(false);
-    }
-  };
-
   const confirmDelete = () => {
     if (selectedId) {
       dispatch(removeTransactionsByWallet({ walletId: selectedId }));
@@ -85,11 +85,7 @@ export default function WalletsPage() {
   };
 
   const saveEdit = (id: string, newName?: string) => {
-    const trimmedName = draftName.trim();
-    if (newName) {
-      const trimmedName = newName.trim();
-    }
-
+    const trimmedName = (newName ? newName : draftName).trim();
     if (!trimmedName) return;
 
     dispatch(updateWallet({ id, changes: { name: trimmedName } }));
@@ -97,19 +93,17 @@ export default function WalletsPage() {
     setDraftName("");
   };
 
-  const handleRenameConfirm = (newName: string) => {
+  /*   const handleRenameConfirm = (newName: string) => {
     setDraftName(newName);
     if (!isMobile) {
-      // Если это не мобильный экран, сохраняем сразу
       if (editingId) {
         saveEdit(editingId);
       }
     } else {
-      // Для мобильного экрана открываем модалку, если нужно
-      setRenameModalOpen(true);
+      setRenameModalOpen(true); // Для мобильного экрана открываем модалку
     }
     setRenameModalOpen(false);
-  };
+  }; */
 
   const cancelEdit = () => {
     setIsEditing(false);
@@ -118,15 +112,19 @@ export default function WalletsPage() {
     setDraftName("");
   };
 
-  /*   if (editingId === selectedId) {
-    setEditingId(null);
-    setDraftName("");
-  } */
+  const handleInfo = (walletId: string) => {
+    const balance = wallets.find((w) => w.wallet.id === walletId)?.balance;
+    const currency = wallets.find((w) => w.wallet.id === walletId)?.wallet
+      .currency;
+    setSelectedBalance(balance || null);
+    setSelectedCurrency(currency || null);
+    setIsInfoModalOpen(true);
+  };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
-      <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-amber-200">
-        <h1 className="text-4xl font-extrabold text-amber-800 mb-6 text-center">
+    <div className="min-h-screen bg-gradient-to-r from-teal-500 to-blue-600 text-gray-800 px-6 py-20">
+      <section className="max-w-3xl mx-auto bg-gray-200 shadow-lg rounded-2xl p-8 border-2 border-blue-950">
+        <h1 className="text-4xl font-shadows font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center">
           Wallets
         </h1>
         {wallets.length === 0 ? (
@@ -134,7 +132,7 @@ export default function WalletsPage() {
             <p className="text-lg font-bold text-center">No Wallets</p>
             <div className="flex justify-center">
               <Link href="/wallets/new">
-                <button className="px-6 py-3 mt-2.5 bg-amber-400 hover:bg-amber-700 text-white font-semibold rounded-xl shadow-md transition-all duration-200 ">
+                <button className="px-6 py-3 mt-2.5 bg-[#0A4C68] hover:bg-amber-700 text-white font-semibold rounded-xl shadow-md transition-all duration-200 ">
                   Add New Wallet
                 </button>
               </Link>
@@ -143,7 +141,7 @@ export default function WalletsPage() {
         ) : (
           <div>
             <ul>
-              <li className="grid grid-cols-3 sm:grid-cols-4 items-center p-3 bg-gray-500 text-white font-semibold rounded-t-lg">
+              <li className="grid grid-cols-3 sm:grid-cols-4 items-center p-3 bg-gradient-to-r from-teal-500 to-blue-600 text-blue-950 font-semibold rounded-t-lg">
                 <span className="text-left">Name</span>
                 <span className="text-center sm:block hidden">Currency</span>
                 <span className="text-center sm:block hidden">Balance</span>
@@ -159,60 +157,89 @@ export default function WalletsPage() {
                     key={wallet.wallet.id}
                     className="grid grid-cols-3 sm:grid-cols-4 items-center p-3 text-black"
                   >
-                    {
-                      <span className="font-semibold text-left">
-                        {!isEditing ? (
-                          <div className="flex items-center gap-2">
-                            <Link
-                              href={`wallets/${wallet.wallet.id}/transactions`}
-                            >
-                              <button className="text-center text-sm sm:text-lg underline hover:text-gray-400">
-                                {wallet.wallet.name}
+                    <span className="font-semibold text-left">
+                      {!isEditing ? (
+                        <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
+                          {/* На мобильных сначала кнопка карандаша, потом название */}
+                          {isMobile ? (
+                            <>
+                              <button
+                                className="px-1 py-1 text-sm bg-amber-200 rounded-lg hover:bg-amber-300 transition hover:scale-110 mb-0"
+                                onClick={() => startEdit(wallet.wallet.id)}
+                                style={{ maxWidth: "20px" }}
+                              >
+                                <Pencil
+                                  className="w-3 h-3 sm:w-4 sm:h-4"
+                                  size={16}
+                                />
                               </button>
-                            </Link>{" "}
-                            <button
-                              className="px-1 py-1 text-sm bg-amber-200 rounded-lg hover:bg-amber-300 transition hover:scale-110"
-                              onClick={() => startEdit(wallet.wallet.id)}
-                            >
-                              <Pencil
-                                className="w-3 h-3 sm:w-4 sm:h-4"
-                                size={16}
-                              />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            {isMobile ? (
-                              <RenameModal
-                                open={isRenameModalOpen}
-                                currentName={wallet.wallet.name}
-                                title="Rename Wallet"
-                                message="Enter a new name for your wallet"
-                                onConfirm={(newName) => {
-                                  saveEdit(wallet.wallet.id, newName);
-                                }}
-                                onCancel={cancelEdit}
-                              />
-                            ) : (
-                              <input
-                                value={draftName}
-                                onChange={(e) => setDraftName(e.target.value)}
-                                className="w-full min-w-[180px] px-3 py-2 border rounded-lg"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter")
-                                    saveEdit(wallet.wallet.id);
-                                  if (e.key === "Escape") cancelEdit();
-                                }}
-                              />
-                            )}
-                          </div>
-                        )}
-                      </span>
-                    }
+                              <Link
+                                href={`wallets/${wallet.wallet.id}/transactions`}
+                                className="min-w-0"
+                              >
+                                <button className="text-center font-shadows text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
+                                  {wallet.wallet.name}
+                                </button>
+                              </Link>
+                            </>
+                          ) : (
+                            // На десктопе сначала название, потом кнопка карандаша
+                            <>
+                              <Link
+                                href={`wallets/${wallet.wallet.id}/transactions`}
+                                className="min-w-0"
+                              >
+                                <button className="text-center font-shadows text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
+                                  {wallet.wallet.name}
+                                </button>
+                              </Link>
+                              <button
+                                className="px-1 py-1 text-sm bg-amber-200 rounded-lg hover:bg-amber-300 transition hover:scale-110"
+                                onClick={() => startEdit(wallet.wallet.id)}
+                              >
+                                <Pencil
+                                  className="w-3 h-3 sm:w-4 sm:h-4"
+                                  size={16}
+                                />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {isMobile ? (
+                            <RenameModal
+                              open={isRenameModalOpen}
+                              currentName={wallet.wallet.name}
+                              title="Rename Wallet"
+                              message="Enter a new name for your wallet"
+                              onConfirm={(newName) =>
+                                saveEdit(wallet.wallet.id, newName)
+                              }
+                              onCancel={cancelEdit}
+                            />
+                          ) : (
+                            <input
+                              value={draftName}
+                              onChange={(e) => setDraftName(e.target.value)}
+                              className="w-full min-w-[180px] px-3 py-2 border rounded-lg"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter")
+                                  saveEdit(wallet.wallet.id);
+                                if (e.key === "Escape") cancelEdit();
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </span>
 
                     <span className="text-center sm:hidden">
-                      <button className="text-gray-600 bg-gray-200 p-2 rounded-full hover:bg-gray-300">
+                      <button
+                        className="text-gray-600 bg-gray-200 p-2 rounded-full hover:bg-gray-300"
+                        onClick={() => handleInfo(wallet.wallet.id)}
+                      >
                         i
                       </button>
                     </span>
@@ -223,7 +250,7 @@ export default function WalletsPage() {
                       {formatMoney(wallet.balance, wallet.wallet.currency)}
                     </span>
                     <div className="justify-self-end flex items-center gap-2">
-                      {isEditing ? (
+                      {isEditing && !isMobile ? (
                         <>
                           <button
                             className="px-2 py-1 text-sm bg-gray-500 text-white rounded-lg tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
@@ -241,10 +268,8 @@ export default function WalletsPage() {
                         </>
                       ) : (
                         <button
-                          className="justify-self-end px-3 bg-gray-500 rounded-2xl font-sans tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
-                          onClick={() => {
-                            handleDeletion(wallet.wallet.id);
-                          }}
+                          className="justify-self-end px-3 text-sm sm:text-[1em] bg-gray-500 rounded-2xl font-sans tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
+                          onClick={() => handleDeletion(wallet.wallet.id)}
                         >
                           Delete Wallet
                         </button>
@@ -256,7 +281,7 @@ export default function WalletsPage() {
             </ul>
             <div className="flex justify-center">
               <Link href="/wallets/new">
-                <button className="px-6 py-3 mt-6 bg-gray-500 hover:bg-amber-400 text-white font-semibold rounded-xl shadow-md transition-all duration-200 ">
+                <button className="px-6 py-3 mt-6 bg-[#BEFF00] hover:bg-lime-500 hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all duration-200 ">
                   Add New Wallet
                 </button>
               </Link>
@@ -270,6 +295,12 @@ export default function WalletsPage() {
         onCancel={cancelDelete}
         title="Delete wallet"
         message="Are you sure you want to delete this wallet? All the transactions in the wallet will be deleted as well"
+      />
+      <InfoModal
+        open={isInfoModalOpen}
+        currency={selectedCurrency || "USD"}
+        balance={selectedBalance || 0}
+        onClose={() => setIsInfoModalOpen(false)}
       />
     </div>
   );
