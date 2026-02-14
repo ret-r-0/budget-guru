@@ -64,7 +64,7 @@ export default function RenameModal({
           <button
             type="button"
             onClick={handleConfirm}
-            className="px-4 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700 transition "
+            className="px-4 py-2 rounded-lg text-sm bg-[#BEFF00] hover:bg-lime-500 transition "
           >
             Rename
           </button>

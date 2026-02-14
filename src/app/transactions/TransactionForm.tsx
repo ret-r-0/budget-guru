@@ -38,11 +38,11 @@ export default function TransactionForm({
   const { walletId } = useParams<{ walletId: string }>();
 
   const wallet = useAppSelector((state) =>
-    state.wallets.items.find((w) => w.id === walletId)
+    state.wallets.items.find((w) => w.id === walletId),
   );
 
   const [currency, setCurrency] = useState<Currency>(
-    wallet?.currency || initialValues?.currency || "USD"
+    wallet?.currency || initialValues?.currency || "USD",
   );
 
   if (!wallet) {
@@ -73,55 +73,55 @@ export default function TransactionForm({
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 text-gray-800 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-r from-teal-500 to-blue-600 text-gray-800 px-6 py-12">
       <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-amber-200">
-        <h1 className="max-w-full font-bold mb-6 text-center mt-5 font-serif text-amber-800">
+        <h1 className="max-w-full font-bold text-lg font-shadows bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center mt-5">
           {title}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-4">
-            <label className="font-serif text-amber-800 mb-2">Name:</label>
+            <label className="font-shadows text-black mb-2">Name:</label>
             <input
               type="text"
               value={name}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
               }
-              className="border-b border-black focus:outline-0"
+              className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-serif text-amber-800  mb-2">Date:</label>
+            <label className="font-shadows text-black mb-2">Date:</label>
             <input
               type="date"
               value={date}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setDate(e.target.value)
               }
-              className="border-b border-black focus:outline-0"
+              className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-serif text-amber-800  mb-2">Amount:</label>
+            <label className="font-shadows text-black mb-2">Amount:</label>
             <input
               type="number"
               value={amount}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setAmount(Number(e.target.value))
               }
-              className="border-b border-black focus:outline-0"
+              className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-serif text-amber-800  mb-2">Type:</label>
+            <label className="font-shadows text-black mb-2">Type:</label>
             <select
               value={type}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setType(e.target.value as TxType)
               }
-              className="border-0 border-black font-serif text-black-800 focus:ring-0 focus:border-none focus:outline-0"
+              className="border-0 border-black font-shadows text-black focus:ring-0 focus:border-none focus:outline-0"
             >
-              <option value="income" className="font-serif text-amber-800">
+              <option value="income" className="font-shadows text-black">
                 Income
               </option>
-              <option value="expense" className="font-serif text-amber-800">
+              <option value="expense" className="font-shadows text-black">
                 Expense
               </option>
             </select>
@@ -130,7 +130,7 @@ export default function TransactionForm({
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                className="px-6 py-2 bg-gray-500 text-white rounded-md focus:ring-2 hover:ring-2  hover:bg-gray-600 hover:scale-103"
               >
                 Cancel
               </button>
@@ -138,7 +138,7 @@ export default function TransactionForm({
               <button
                 disabled={!isValid}
                 type="submit"
-                className="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-[#BEFF00] hover:bg-lime-500 font-shadows hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 rounded-lg transition hover:scale-103 shadow-md disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-[#BEFF00] disabled:hover:ring-0"
               >
                 {submitLabel}
               </button>
