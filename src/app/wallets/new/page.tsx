@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useAppDispatch } from "@/store/hooks";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { addWallet } from "@/features/wallets/walletSlice";
-import { Currency } from "@/features/wallets/walletCurrencies";
+import React from 'react';
+import { useAppDispatch } from '@/store/hooks';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { addWallet } from '@/features/wallets/walletSlice';
+import { Currency } from '@/features/wallets/walletCurrencies';
 
 const AddWalletForm = () => {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [currency, setCurrency] = useState<Currency>("USD");
+  const [name, setName] = useState('');
+  const [currency, setCurrency] = useState<Currency>('USD');
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const validateForm = () => {
@@ -36,7 +36,7 @@ const AddWalletForm = () => {
     };
 
     dispatch(addWallet(wallet));
-    router.push("/wallets");
+    router.push('/wallets');
   };
 
   useEffect(() => {
@@ -90,14 +90,14 @@ const AddWalletForm = () => {
                 CHY
               </option>
               <option value="CHF" className="font-shadows text-black">
-                CH{" "}
+                CH{' '}
               </option>
             </select>
             <section className="flex justify-center gap-5 mt-25">
               <button
                 type="button"
-                onClick={() => router.push("/wallets")}
-                className="px-6 py-2 bg-gray-500 text-white focus:ring-2 hover:ring-2 rounded-xl hover:bg-gray-600 hover:scale-105"
+                onClick={() => router.push('/wallets')}
+                className="px-6 py-2 bg-gray-500 text-white font-shadows focus:ring-2 hover:ring-2 rounded-xl hover:bg-gray-600 hover:scale-105"
               >
                 Cancel
               </button>

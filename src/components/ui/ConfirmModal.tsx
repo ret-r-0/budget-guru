@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 type ConfirmModalProps = {
   open: boolean;
@@ -10,8 +10,8 @@ type ConfirmModalProps = {
 
 export default function ConfirmModal({
   open,
-  title = "Are you sure?",
-  message = "This action cannot be undone",
+  title = 'Are you sure?',
+  message = 'This action cannot be undone',
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
@@ -25,20 +25,22 @@ export default function ConfirmModal({
         className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">{title}</h2>
-        <p className="text-lg font-semibold text-gray-800 mb-2">{message}</p>
+        <h2 className="text-lg font-semibold font-shadows text-gray-800 mb-2">
+          {title}
+        </h2>
+        <p className="text-lg font-shadows text-gray-800 mb-2">{message}</p>
         <div className=" flex justify-end gap-3">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg text-sm bg-gray-200 hover:bg-gray-300"
+            className="px-4 py-2 rounded-lg text-sm font-shadows bg-gray-200 hover:bg-gray-300"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="px-4 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700 transition "
+            className="px-4 py-2 rounded-lg text-sm font-shadows bg-red-600 text-white hover:bg-red-700 transition "
           >
             Delete
           </button>
