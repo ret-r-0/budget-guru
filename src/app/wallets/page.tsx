@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import { useAppSelector } from "@/store/hooks";
-import { removeWallet } from "@/features/wallets/walletSlice";
-import Link from "next/link";
-import { useDispatch } from "react-redux";
-import { removeTransactionsByWallet } from "@/features/transactions/transactionSlice";
-import { selectWalletsWithTotals } from "@/features/wallets/walletSelectors";
-import { use, useEffect, useState } from "react";
-import ConfirmModal from "@/components/ui/ConfirmModal";
-import { Pencil } from "lucide-react";
-import { formatMoney } from "../utils/formatMoney";
-import { updateWallet } from "@/features/wallets/walletSlice";
-import InfoModal from "@/components/ui/InfoModal";
-import RenameModal from "@/components/ui/RenameModal";
-import { set } from "zod";
-import { Currency } from "@/features/wallets/walletCurrencies";
+import { useAppSelector } from '@/store/hooks';
+import { removeWallet } from '@/features/wallets/walletSlice';
+import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { removeTransactionsByWallet } from '@/features/transactions/transactionSlice';
+import { selectWalletsWithTotals } from '@/features/wallets/walletSelectors';
+import { use, useEffect, useState } from 'react';
+import ConfirmModal from '@/components/ui/ConfirmModal';
+import { Pencil } from 'lucide-react';
+import { formatMoney } from '../utils/formatMoney';
+import { updateWallet } from '@/features/wallets/walletSlice';
+import InfoModal from '@/components/ui/InfoModal';
+import RenameModal from '@/components/ui/RenameModal';
+import { set } from 'zod';
+import { Currency } from '@/features/wallets/walletCurrencies';
 
 export default function WalletsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [walletName, setWalletName] = useState("My Wallet");
+  const [walletName, setWalletName] = useState('My Wallet');
   const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [isRenameModalOpen, setRenameModalOpen] = useState<boolean>(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(
-    null,
+    null
   );
   const [selectedBalance, setSelectedBalance] = useState<number | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [draftName, setDraftName] = useState<string>("");
+  const [draftName, setDraftName] = useState<string>('');
 
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
@@ -43,9 +43,9 @@ export default function WalletsPage() {
 
   useEffect(() => {
     checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
+    window.addEventListener('resize', checkScreenSize);
     return () => {
-      window.removeEventListener("resize", checkScreenSize);
+      window.removeEventListener('resize', checkScreenSize);
     };
   }, []);
 
@@ -77,7 +77,7 @@ export default function WalletsPage() {
     setEditingId(id); // Устанавливаем кошелек для редактирования
     setIsEditing(true);
     setDraftName(
-      wallets.find((wallet) => wallet.wallet.id === id)?.wallet.name || "",
+      wallets.find((wallet) => wallet.wallet.id === id)?.wallet.name || ''
     );
     if (isMobile) {
       setRenameModalOpen(true); // Модалка на мобильном
@@ -90,7 +90,7 @@ export default function WalletsPage() {
 
     dispatch(updateWallet({ id, changes: { name: trimmedName } }));
     setEditingId(null);
-    setDraftName("");
+    setDraftName('');
   };
 
   /*   const handleRenameConfirm = (newName: string) => {
@@ -109,7 +109,7 @@ export default function WalletsPage() {
     setIsEditing(false);
     setRenameModalOpen(false);
     setEditingId(null);
-    setDraftName("");
+    setDraftName('');
   };
 
   const handleInfo = (walletId: string) => {
@@ -169,9 +169,10 @@ export default function WalletsPage() {
                           {isMobile ? (
                             <>
                               <button
+                                aria-label={`Edit wallet ${wallet.wallet.name}`}
                                 className="px-1 py-1 text-sm bg-[#BEFF00] hover:bg-lime-500 rounded-lg transition hover:scale-110 mb-0"
                                 onClick={() => startEdit(wallet.wallet.id)}
-                                style={{ maxWidth: "20px" }}
+                                style={{ maxWidth: '20px' }}
                               >
                                 <Pencil
                                   className="w-3 h-3 sm:w-4 sm:h-4"
@@ -199,6 +200,7 @@ export default function WalletsPage() {
                                 </button>
                               </Link>
                               <button
+                                aria-label={`Edit wallet ${wallet.wallet.name}`}
                                 className="px-1 py-1 text-sm rounded-lg bg-[#BEFF00] hover:bg-lime-500 transition hover:scale-110"
                                 onClick={() => startEdit(wallet.wallet.id)}
                               >
@@ -224,17 +226,26 @@ export default function WalletsPage() {
                               onCancel={cancelEdit}
                             />
                           ) : (
-                            <input
-                              value={draftName}
-                              onChange={(e) => setDraftName(e.target.value)}
-                              className="w-full font-shadows min-w-[180px] px-3 py-2 border rounded-lg"
-                              autoFocus
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter")
-                                  saveEdit(wallet.wallet.id);
-                                if (e.key === "Escape") cancelEdit();
-                              }}
-                            />
+                            <>
+                              <label
+                                htmlFor={`wallet-name-${wallet.wallet.id}`}
+                                className="sr-only"
+                              >
+                                Wallet name
+                              </label>
+                              <input
+                                id={`wallet-name-${wallet.wallet.id}`}
+                                value={draftName}
+                                onChange={(e) => setDraftName(e.target.value)}
+                                className="w-full font-shadows min-w-[180px] px-3 py-2 border rounded-lg"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter')
+                                    saveEdit(wallet.wallet.id);
+                                  if (e.key === 'Escape') cancelEdit();
+                                }}
+                              />
+                            </>
                           )}
                         </div>
                       )}
@@ -303,7 +314,7 @@ export default function WalletsPage() {
       />
       <InfoModal
         open={isInfoModalOpen}
-        currency={selectedCurrency || "USD"}
+        currency={selectedCurrency || 'USD'}
         balance={selectedBalance || 0}
         onClose={() => setIsInfoModalOpen(false)}
       />

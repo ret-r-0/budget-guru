@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { useParams } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-import { Currency } from "@/features/wallets/walletCurrencies";
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useParams } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+import { Currency } from '@/features/wallets/walletCurrencies';
+import React from 'react';
 
-type TxType = "income" | "expense";
+type TxType = 'income' | 'expense';
 
 export type TransactionFormValues = {
   name: string;
@@ -30,32 +31,35 @@ export default function TransactionForm({
   onSubmit,
   onCancel,
 }: Props) {
-  const [name, setName] = useState(initialValues?.name || "");
+  const [name, setName] = useState(initialValues?.name || '');
   const [amount, setAmount] = useState<number>(initialValues?.amount || 0);
-  const [date, setDate] = useState(initialValues?.date || "");
-  const [type, setType] = useState<TxType>(initialValues?.type || "income");
+  const [date, setDate] = useState(initialValues?.date || '');
+  const [type, setType] = useState<TxType>(initialValues?.type || 'income');
 
   const { walletId } = useParams<{ walletId: string }>();
 
   const wallet = useAppSelector((state) =>
-    state.wallets.items.find((w) => w.id === walletId),
+    state.wallets.items.find((w) => w.id === walletId)
   );
 
   const [currency, setCurrency] = useState<Currency>(
-    wallet?.currency || initialValues?.currency || "USD",
+    wallet?.currency || initialValues?.currency || 'USD'
   );
+
+  useEffect(() => {
+    setName(initialValues?.name ?? '');
+    setAmount(initialValues?.amount != null ? initialValues.amount : 0);
+    setDate(initialValues?.date ?? '');
+    setType(initialValues?.type ?? 'income');
+  }, [initialValues]);
+
+  useEffect(() => {
+    setCurrency(wallet?.currency ?? initialValues?.currency ?? 'USD');
+  }, [wallet?.currency, initialValues?.currency]);
 
   if (!wallet) {
     return <div>Wallet not found</div>;
   }
-
-  useEffect(() => {
-    setName(initialValues?.name ?? "");
-    setAmount(initialValues?.amount != null ? initialValues.amount : 0);
-    setDate(initialValues?.date ?? "");
-    setType(initialValues?.type ?? "income");
-    setCurrency(wallet?.currency || initialValues?.currency || "USD");
-  }, [initialValues]);
 
   const isValid = name.trim().length > 0 && Number(amount) > 0;
 
@@ -80,8 +84,11 @@ export default function TransactionForm({
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-4">
-            <label className="font-shadows text-black mb-2">Name:</label>
+            <label htmlFor="name" className="font-shadows text-black mb-2">
+              Name:
+            </label>
             <input
+              id="name"
               type="text"
               value={name}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -90,8 +97,11 @@ export default function TransactionForm({
               className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-shadows text-black mb-2">Date:</label>
+            <label htmlFor="date" className="font-shadows text-black mb-2">
+              Date:
+            </label>
             <input
+              id="date"
               type="date"
               value={date}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -100,8 +110,11 @@ export default function TransactionForm({
               className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-shadows text-black mb-2">Amount:</label>
+            <label htmlFor="amount" className="font-shadows text-black mb-2">
+              Amount:
+            </label>
             <input
+              id="amount"
               type="number"
               value={amount}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -110,8 +123,11 @@ export default function TransactionForm({
               className="border-b font-shadows border-black focus:outline-0"
             />
 
-            <label className="font-shadows text-black mb-2">Type:</label>
+            <label htmlFor="type" className="font-shadows text-black mb-2">
+              Type:
+            </label>
             <select
+              id="type"
               value={type}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setType(e.target.value as TxType)

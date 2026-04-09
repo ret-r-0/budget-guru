@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { editTransaction } from "@/features/transactions/transactionSlice";
 import { useRouter, useParams } from "next/navigation";
