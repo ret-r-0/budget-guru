@@ -144,19 +144,19 @@ export default function TransactionPage() {
         <div className="w-full flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between mb-6">
           <div className="text-center sm:w-1/3">
             <Link href={`/wallets/`}>
-              <button className="flex mr-0 bg-[#BEFF00] hover:bg-lime-500 px-5 py-3 text-md rounded-lg hover:ring-2 focus:ring-2 font-shadows focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
+              <button className="flex mr-0 bg-[#BEFF00] hover:bg-lime-500 px-5 py-3 text-md rounded-lg hover:ring-2 focus:ring-2 font-titillium focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
                 <ArrowBigLeft className="w-4 h-4 sm:hidden" />
                 <span className="hidden sm:block">Back To Wallets</span>
               </button>
             </Link>
           </div>
           {/* <Link href={`/wallets/`}>
-            <button className="bg-[#BEFF00] hover:bg-lime-500 px-4 py-2 mb-4 text-md rounded-lg hover:ring-2 focus:ring-2 font-shadows focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
+            <button className="bg-[#BEFF00] hover:bg-lime-500 px-4 py-2 mb-4 text-md rounded-lg hover:ring-2 focus:ring-2 font-titillium focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
               <ArrowBigLeft className="w-5 h-5 sm:w-4 sm:h-4" />
             </button>
           </Link> */}
           <div className="text-center sm:w-1/3">
-            <h1 className="flex-1 text-2xl sm:text-4xl font-shadows font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 text-center">
+            <h1 className="flex-1 text-2xl sm:text-4xl font-titillium font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 text-center">
               Transactions
             </h1>
           </div>
@@ -166,12 +166,12 @@ export default function TransactionPage() {
         {transactions.length === 0 ? (
           <div>
             <div>
-              <p className="text-lg font-shadows font-bold text-center">
+              <p className="text-lg font-titillium font-bold text-center">
                 No Transactions
               </p>
               <div className="flex justify-center">
                 <Link href={`/wallets/${walletId}/transactions/new`}>
-                  <button className="px-3 py-3 mt-6 sm:px-6 bg-[#BEFF00] hover:bg-lime-500 font-shadows hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
+                  <button className="px-3 py-3 mt-6 sm:px-6 bg-[#BEFF00] hover:bg-lime-500 font-titillium hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
                     Add New Transaction
                   </button>
                 </Link>
@@ -185,7 +185,7 @@ export default function TransactionPage() {
                 {/* dates */}
                 <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 sm:mr-6 w-full sm:w-auto">
                   <div className="flex flex-col">
-                    <label className="text-xs sm:text-sm font-shadows text-gray-600">
+                    <label className="text-xs sm:text-sm font-titillium text-gray-600">
                       From:
                     </label>
                     <input
@@ -197,7 +197,7 @@ export default function TransactionPage() {
                   </div>
 
                   <div className="flex flex-col">
-                    <label className="text-xs sm:text-sm font-shadows text-gray-600">
+                    <label className="text-xs sm:text-sm font-titillium text-gray-600">
                       To:
                     </label>
                     <input
@@ -217,7 +217,7 @@ export default function TransactionPage() {
                       e.target.value as 'all' | 'income' | 'expense'
                     )
                   }
-                  className="w-full sm:w-auto px-2 py-2 sm:px-4 sm:py-2 rounded-lg border text-sm font-shadows border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full sm:w-auto px-2 py-2 sm:px-4 sm:py-2 rounded-lg border text-sm font-titillium border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="all">All</option>
                   <option value="income">Income</option>
@@ -226,7 +226,7 @@ export default function TransactionPage() {
               </div>
               <ul>
                 <li
-                  className={`grid ${isMobile ? 'grid-cols-4' : 'grid-cols-5'} items-center p-3  font-shadows items-center bg-gradient-to-r from-teal-500 to-blue-600 text-blue-950 font-semibold rounded-t-lg`}
+                  className={`grid ${isMobile ? 'grid-cols-4' : 'grid-cols-5'} items-center p-3  font-titillium items-center bg-gradient-to-r from-teal-500 to-blue-600 text-blue-950 font-semibold rounded-t-lg`}
                 >
                   <span className="text-left hidden sm:block">Type</span>
                   <span className={`text-center text-sm sm:text-l`}>
@@ -239,7 +239,7 @@ export default function TransactionPage() {
                 {filteredTransactions.map((tx) => (
                   <li
                     key={tx.id}
-                    className={`grid ${isMobile ? 'grid-cols-4' : 'sm:grid-cols-5'}  font-shadows items-center p-3 text-white ${
+                    className={`grid ${isMobile ? 'grid-cols-4' : 'sm:grid-cols-5'}  font-titillium items-center p-3 text-white ${
                       tx.type === 'income' ? 'bg-[#77EB2C]' : 'bg-[#F44336]'
                     }`}
                   >
@@ -262,7 +262,7 @@ export default function TransactionPage() {
                     <span className="text-center text-sm">{tx.date}</span>
                     {isMobile ? (
                       <button
-                        className="justify-self-end text-xs sm:text-lg px-3 bg-gray-500 rounded-2xl font-shadows tracking-tight transition-transform duration-350 bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:scale-110"
+                        className="justify-self-end text-xs sm:text-lg px-3 bg-gray-500 rounded-2xl font-titillium tracking-tight transition-transform duration-350 bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:scale-110"
                         onClick={() => {
                           handleDeletion(tx.id);
                         }}
@@ -271,7 +271,7 @@ export default function TransactionPage() {
                       </button>
                     ) : (
                       <button
-                        className="justify-self-end text-xs sm:text-base px-3 bg-gray-500 rounded-2xl font-shadows tracking-tight transition-transform duration-350 bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:scale-110"
+                        className="justify-self-end text-xs sm:text-base px-3 bg-gray-500 rounded-2xl font-titillium tracking-tight transition-transform duration-350 bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 hover:scale-110"
                         onClick={() => {
                           handleDeletion(tx.id);
                         }}
@@ -285,26 +285,26 @@ export default function TransactionPage() {
               {!isMobile ? (
                 <div className="flex justify-between mt-6 px-5 gap-x-4">
                   <div className="flex gap-y-1 flex-col flex-1 bg-[#77EB2C] rounded-full border-2">
-                    <p className="text-sm font-medium font-shadows text-center">
+                    <p className="text-sm font-medium font-titillium text-center">
                       Income:
                     </p>
-                    <p className="text-xl font-bold font-shadows text-center">
+                    <p className="text-xl font-bold font-titillium text-center">
                       {income.toFixed(2)}
                     </p>
                   </div>
                   <div className="flex flex-col gap-y-1 flex-1 bg-[#F44336] rounded-full border-2">
-                    <p className="text-sm font-medium font-shadows text-center">
+                    <p className="text-sm font-medium font-titillium text-center">
                       Expense:
                     </p>
-                    <p className="text-xl font-bold font-shadows text-center">
+                    <p className="text-xl font-bold font-titillium text-center">
                       {expense.toFixed(2)}
                     </p>
                   </div>
                   <div className="flex flex-col gap-y-1 flex-1 bg-gradient-to-r from-teal-500 to-blue-600 rounded-full border-2">
-                    <p className="text-sm font-medium font-shadows text-center">
+                    <p className="text-sm font-medium font-titillium text-center">
                       Total:
                     </p>
-                    <p className="text-xl font-bold font-shadows text-center">
+                    <p className="text-xl font-bold font-titillium text-center">
                       {balance.toFixed(2)}
                     </p>
                   </div>
@@ -313,21 +313,21 @@ export default function TransactionPage() {
                 <div className="flex justify-between mt-6 px-5 gap-x-4">
                   <div className="flex flex-col flex-1 bg-[#77EB2C] rounded-full border-2 h-full">
                     <Link href="#" onClick={() => handleStats('income')}>
-                      <button className="text-sm font-medium font-shadows text-center flex items-center justify-center w-full h-full">
+                      <button className="text-sm font-medium font-titillium text-center flex items-center justify-center w-full h-full">
                         Income
                       </button>
                     </Link>
                   </div>
                   <div className="flex flex-col flex-1 bg-[#F44336] rounded-full border-2 h-full">
                     <Link href="#" onClick={() => handleStats('expense')}>
-                      <button className="text-sm font-medium font-shadows text-center flex items-center justify-center w-full h-full">
+                      <button className="text-sm font-medium font-titillium text-center flex items-center justify-center w-full h-full">
                         Expense
                       </button>
                     </Link>
                   </div>
                   <div className="flex flex-col flex-1 bg-gradient-to-r from-teal-500 to-blue-600 rounded-full border-2 h-full">
                     <Link href="#" onClick={() => handleStats('balance')}>
-                      <button className="text-sm font-medium font-shadows text-center flex items-center justify-center w-full h-full">
+                      <button className="text-sm font-medium font-titillium text-center flex items-center justify-center w-full h-full">
                         Total
                       </button>
                     </Link>
@@ -337,7 +337,7 @@ export default function TransactionPage() {
 
               <div className="flex justify-center">
                 <Link href={`/wallets/${walletId}/transactions/new`}>
-                  <button className="px-6 py-3 mt-8 bg-[#BEFF00] hover:bg-lime-500 font-shadows hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
+                  <button className="px-6 py-3 mt-8 bg-[#BEFF00] hover:bg-lime-500 font-titillium hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
                     Add New Transaction
                   </button>
                 </Link>

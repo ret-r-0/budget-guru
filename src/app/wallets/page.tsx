@@ -124,17 +124,17 @@ export default function WalletsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-teal-500 to-blue-600 text-gray-800 px-6 py-20">
       <section className="max-w-3xl mx-auto bg-gray-200 shadow-lg rounded-2xl p-8 border-2 border-blue-950">
-        <h1 className="text-4xl font-shadows font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center">
+        <h1 className="text-4xl font-titillium font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center">
           Wallets
         </h1>
         {wallets.length === 0 ? (
           <div>
-            <p className="text-lg font-bold font-shadows text-center">
+            <p className="text-lg font-bold font-titillium text-center">
               No Wallets
             </p>
             <div className="flex justify-center">
               <Link href="/wallets/new">
-                <button className="px-6 font-shadows py-3 mt-2.5 bg-[#BEFF00] hover:bg-lime-500 rounded-lg transition hover:scale-105  font-semibold rounded-xl focus:ring-2 hover:ring-2 shadow-md transition-all duration-200 ">
+                <button className="px-6 font-titillium py-3 mt-2.5 bg-[#BEFF00] hover:bg-lime-500 rounded-lg transition hover:scale-105  font-semibold rounded-xl focus:ring-2 hover:ring-2 shadow-md transition-all duration-200 ">
                   Add New Wallet
                 </button>
               </Link>
@@ -143,7 +143,7 @@ export default function WalletsPage() {
         ) : (
           <div>
             <ul>
-              <li className="grid grid-cols-3 sm:grid-cols-4 font-shadows items-center p-3 bg-gradient-to-r from-teal-500 to-blue-600 text-blue-950 font-semibold rounded-t-lg">
+              <li className="grid grid-cols-3 sm:grid-cols-4 font-titillium items-center p-3 bg-gradient-to-r from-teal-500 to-blue-600 text-blue-950 font-semibold rounded-t-lg">
                 <span className="text-left">Name</span>
                 <span className="text-center sm:block hidden">Currency</span>
                 <span className="text-center sm:block hidden">Balance</span>
@@ -160,7 +160,7 @@ export default function WalletsPage() {
                 return (
                   <li
                     key={wallet.wallet.id}
-                    className="grid grid-cols-3 font-shadows sm:grid-cols-4 items-center p-3 text-black"
+                    className="grid grid-cols-3 font-titillium sm:grid-cols-4 items-center p-3 text-black"
                   >
                     <span className="font-semibold text-left">
                       {!isEditing ? (
@@ -183,7 +183,7 @@ export default function WalletsPage() {
                                 href={`wallets/${wallet.wallet.id}/transactions`}
                                 className="min-w-0"
                               >
-                                <button className="text-center font-shadows text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
+                                <button className="text-center font-titillium text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
                                   {wallet.wallet.name}
                                 </button>
                               </Link>
@@ -195,7 +195,7 @@ export default function WalletsPage() {
                                 href={`wallets/${wallet.wallet.id}/transactions`}
                                 className="min-w-0"
                               >
-                                <button className="text-center font-shadows text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
+                                <button className="text-center font-titillium text-sm sm:text-base hover:text-gray-400 block max-w-full truncate">
                                   {wallet.wallet.name}
                                 </button>
                               </Link>
@@ -213,7 +213,7 @@ export default function WalletsPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="flex font-shadows items-center gap-2">
+                        <div className="flex font-titillium items-center gap-2">
                           {isMobile ? (
                             <RenameModal
                               open={isRenameModalOpen}
@@ -237,7 +237,7 @@ export default function WalletsPage() {
                                 id={`wallet-name-${wallet.wallet.id}`}
                                 value={draftName}
                                 onChange={(e) => setDraftName(e.target.value)}
-                                className="w-full font-shadows min-w-[180px] px-3 py-2 border rounded-lg"
+                                className="w-full font-titillium min-w-[180px] px-3 py-2 border rounded-lg"
                                 autoFocus
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter')
@@ -253,7 +253,7 @@ export default function WalletsPage() {
 
                     <span className="text-center sm:hidden">
                       <button
-                        className="text-gray-600 bg-[#BEFF00] hover:bg-lime-500 p-2 rounded-full font-shadows"
+                        className="text-gray-600 bg-[#BEFF00] hover:bg-lime-500 p-2 rounded-full font-titillium"
                         onClick={() => handleInfo(wallet.wallet.id)}
                       >
                         i
@@ -269,14 +269,14 @@ export default function WalletsPage() {
                       {isEditing && !isMobile ? (
                         <>
                           <button
-                            className="px-2 py-1 text-sm bg-[#BEFF00] hover:bg-lime-500 font-shadows rounded-lg tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
+                            className="px-2 py-1 text-sm bg-[#BEFF00] hover:bg-lime-500 font-titillium rounded-lg tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
                             onClick={() => saveEdit(wallet.wallet.id)}
                             disabled={!draftName.trim()}
                           >
                             Save
                           </button>
                           <button
-                            className="px-2 py-1 text-sm bg-[#BEFF00] hover:bg-lime-500 font-shadows rounded-lg tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
+                            className="px-2 py-1 text-sm bg-[#BEFF00] hover:bg-lime-500 font-titillium rounded-lg tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
                             onClick={cancelEdit}
                           >
                             Cancel
@@ -284,7 +284,7 @@ export default function WalletsPage() {
                         </>
                       ) : (
                         <button
-                          className="justify-self-end px-3 font-shadows text-sm sm:text-[1em] bg-[#BEFF00] hover:bg-lime-500 rounded-2xl font-sans tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
+                          className="justify-self-end px-3 font-titillium text-sm sm:text-[1em] bg-[#BEFF00] hover:bg-lime-500 rounded-2xl font-sans tracking-tight transition-transform duration-350 hover:bg-amber-300 hover:scale-110"
                           onClick={() => handleDeletion(wallet.wallet.id)}
                         >
                           Delete Wallet
@@ -297,7 +297,7 @@ export default function WalletsPage() {
             </ul>
             <div className="flex justify-center">
               <Link href="/wallets/new">
-                <button className="px-6 py-3 mt-6 bg-[#BEFF00] hover:bg-lime-500 font-shadows hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
+                <button className="px-6 py-3 mt-6 bg-[#BEFF00] hover:bg-lime-500 font-titillium hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 font-semibold rounded-xl shadow-md transition-all hover:scale-105 duration-200 ">
                   Add New Wallet
                 </button>
               </Link>

@@ -79,12 +79,12 @@ export default function TransactionForm({
   return (
     <div className="min-h-screen bg-gradient-to-r from-teal-500 to-blue-600 text-gray-800 px-6 py-12">
       <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-amber-200">
-        <h1 className="max-w-full font-bold text-lg font-shadows bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center mt-5">
+        <h1 className="max-w-full font-bold text-lg font-titillium bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 mb-6 text-center mt-5">
           {title}
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-4">
-            <label htmlFor="name" className="font-shadows text-black mb-2">
+            <label htmlFor="name" className="font-titillium text-black mb-2">
               Name:
             </label>
             <input
@@ -94,10 +94,10 @@ export default function TransactionForm({
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setName(e.target.value)
               }
-              className="border-b font-shadows border-black focus:outline-0"
+              className="border-b font-titillium border-black focus:outline-0"
             />
 
-            <label htmlFor="date" className="font-shadows text-black mb-2">
+            <label htmlFor="date" className="font-titillium text-black mb-2">
               Date:
             </label>
             <input
@@ -107,10 +107,10 @@ export default function TransactionForm({
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setDate(e.target.value)
               }
-              className="border-b font-shadows border-black focus:outline-0"
+              className="border-b font-titillium border-black focus:outline-0"
             />
 
-            <label htmlFor="amount" className="font-shadows text-black mb-2">
+            <label htmlFor="amount" className="font-titillium text-black mb-2">
               Amount:
             </label>
             <input
@@ -120,10 +120,10 @@ export default function TransactionForm({
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setAmount(Number(e.target.value))
               }
-              className="border-b font-shadows border-black focus:outline-0"
+              className="border-b font-titillium border-black focus:outline-0"
             />
 
-            <label htmlFor="type" className="font-shadows text-black mb-2">
+            <label htmlFor="type" className="font-titillium text-black mb-2">
               Type:
             </label>
             <select
@@ -132,12 +132,12 @@ export default function TransactionForm({
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setType(e.target.value as TxType)
               }
-              className="border-0 border-black font-shadows text-black focus:ring-0 focus:border-none focus:outline-0"
+              className="border-0 border-black font-titillium text-black focus:ring-0 focus:border-none focus:outline-0"
             >
-              <option value="income" className="font-shadows text-black">
+              <option value="income" className="font-titillium text-black">
                 Income
               </option>
-              <option value="expense" className="font-shadows text-black">
+              <option value="expense" className="font-titillium text-black">
                 Expense
               </option>
             </select>
@@ -154,7 +154,7 @@ export default function TransactionForm({
               <button
                 disabled={!isValid}
                 type="submit"
-                className="px-6 py-2 bg-[#BEFF00] hover:bg-lime-500 font-shadows hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 rounded-lg transition hover:scale-103 shadow-md disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-[#BEFF00] disabled:hover:ring-0"
+                className="px-6 py-2 bg-[#BEFF00] hover:bg-lime-500 font-titillium hover:ring-2 focus:ring-2 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800 rounded-lg transition hover:scale-103 shadow-md disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-[#BEFF00] disabled:hover:ring-0"
               >
                 {submitLabel}
               </button>

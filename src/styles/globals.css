@@ -1,9 +1,14 @@
 @font-face {
-  font-family: "Shadows";
-  src: url("/fonts/ShadowsIntoLight-Regular.ttf") format("truetype");
+  font-family: 'Shadows';
+  src: url('/fonts/ShadowsIntoLight-Regular.ttf') format('truetype');
 }
 
-@import "tailwindcss";
+@font-face {
+  font-family: 'Titillium';
+  src: url('/fonts/TitilliumWeb-Regular.ttf') format('truetype');
+}
+
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -15,7 +20,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-shadows: "Shadows", cursive;
+  --font-shadows: 'Shadows', cursive;
+  --font-titillium: 'Titillium', regular;
 }
 
 @media (prefers-color-scheme: dark) {
